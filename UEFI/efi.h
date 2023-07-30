@@ -126,9 +126,9 @@ typedef VOID            *EFI_EVENT;
 typedef struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL EFI_SIMPLE_TEXT_INPUT_PROTOCOL;                                          // Forward declaration to fix circular dependency
 
 typedef struct {
-    UINT16                          ScanCode;
-    CHAR16                          UnicodeChar;
-}       EFI_INPUT_KEY;
+  UINT16                          ScanCode;
+  CHAR16                          UnicodeChar;
+}   EFI_INPUT_KEY;
 
 
 ///
@@ -136,10 +136,10 @@ typedef struct {
 ///
 typedef
 EFI_STATUS
-  (EFIAPI *EFI_INPUT_READ_KEY) (
-    IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL           *This,
-    OUT EFI_INPUT_KEY                           *Key
-    );
+(EFIAPI *EFI_INPUT_READ_KEY) (
+  IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL           *This,
+  OUT EFI_INPUT_KEY                           *Key
+  );
 
 ///
 /// ExtendedVerification Indicates that the driver may perform a more exhaustive verification operation of the device
@@ -150,16 +150,16 @@ EFI_STATUS
 ///
 typedef
 EFI_STATUS
-  (EFIAPI *EFI_INPUT_RESET) (
-    IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL           *This,
-    IN BOOLEAN                                  ExtendedVerification
-    );
+(EFIAPI *EFI_INPUT_RESET) (
+  IN EFI_SIMPLE_TEXT_INPUT_PROTOCOL           *This,
+  IN BOOLEAN                                  ExtendedVerification
+  );
 
 typedef struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
-    EFI_INPUT_RESET                 Reset;
-    EFI_INPUT_READ_KEY              ReadKeyStroke;
-    EFI_EVENT                       WaitForKey;
-}       EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
+  EFI_INPUT_RESET                 Reset;
+  EFI_INPUT_READ_KEY              ReadKeyStroke;
+  EFI_EVENT                       WaitForKey;
+}   EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
 
 //
 // UEFI Spec Release 2.10 section 12.4 Simple Text Output Protocol
@@ -170,39 +170,39 @@ typedef struct _EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
 typedef
 EFI_STATUS
 (EFIAPI *EFI_TEXT_RESET) (
-        IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
-        IN BOOLEAN                                  ExtendedVerification
-        );
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN BOOLEAN                                  ExtendedVerification
+  );
 
 typedef
 EFI_STATUS
 (EFIAPI *EFI_TEXT_STRING) (
-        IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
-        IN CHAR16                                   *String
-        );
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN CHAR16                                   *String
+  );
 
 typedef
 EFI_STATUS
 (EFIAPI *EFI_TEXT_TEST_STRING) (
-        IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
-        IN CHAR16                                   *String
-        );
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN CHAR16                                   *String
+  );
 
 typedef
 EFI_STATUS
 (EFIAPI *EFI_TEXT_QUERY_MODE) (
-        IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
-        IN UINTN                                    ModeNumber,
-        OUT UINTN                                   Columns,
-        OUT UINTN                                   Rows
-        );
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN UINTN                                    ModeNumber,
+  OUT UINTN                                   Columns,
+  OUT UINTN                                   Rows
+  );
 
 typedef
 EFI_STATUS
 (EFIAPI *EFI_TEXT_SET_MODE) (
-        IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
-        IN UINTN                                    ModeNumber
-        );
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN UINTN                                    ModeNumber
+  );
 
 //
 // The attribute to set. Bits 0..3 are the foreground color, and bits 4..6 are the background color. All other bits
@@ -211,9 +211,9 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_TEXT_SET_ATTRIBUTE) (
-        IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
-        IN UINTN                                    Attribute
-        );
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN UINTN                                    Attribute
+  );
 
 //
 // Attributes
@@ -248,28 +248,56 @@ EFI_STATUS
 #define EFI_TEXT_ATTR(Foreground,Background) \
     ((Foreground) | ((Background) << 4))
 
+typedef
+EFI_STATUS
+(EFIAPI *EFI_TEXT_SET_ATTRIBUTE) (
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN UINTN                                    Attribute
+  );
+
+typedef
+EFI_STATUS
+(EFIAPI *EFI_TEXT_CLEAR_SCREEN) (
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This
+  );
+
+typedef
+EFI_STATUS
+(EFIAPI *EFI_TEXT_SET_CURSOR_POSITION) (
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN UINTN                                    Column,
+  IN UINTN                                    Row
+  );
+
+typedef
+EFI_STATUS
+(EFIAPI *EFI_TEXT_ENABLE_CURSOR) (
+  IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL          *This,
+  IN BOOLEAN                                  Visible
+  );
+
 typedef struct {
-    INT32                           MaxMode;
-    // current settings
-    INT32                           Mode;
-    INT32                           Attribute;
-    INT32                           CursorColumn;
-    INT32                           CursorRow;
-    BOOLEAN                         CursorVisible;
-}       SIMPLE_TEXT_OUTPUT_MODE;
+  INT32                           MaxMode;
+  // current settings
+  INT32                           Mode;
+  INT32                           Attribute;
+  INT32                           CursorColumn;
+  INT32                           CursorRow;
+  BOOLEAN                         CursorVisible;
+}   SIMPLE_TEXT_OUTPUT_MODE;
 
 typedef struct _EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL {
-    EFI_TEXT_RESET                  Reset;
-    EFI_TEXT_STRING                 OutputString;
-    EFI_TEXT_TEST_STRING            TestString;
-    EFI_TEXT_QUERY_MODE             QueryMode;
-    EFI_TEXT_SET_MODE               SetMode;
-    EFI_TEXT_SET_ATTRIBUTE          SetAttribute;
-    EFI_TEXT_CLEAR_SCREEN           ClearScreen;
-    EFI_TEXT_SET_CURSOR_POSITION    SetCursorPosition;
-    EFI_TEXT_ENABLE_CURSOR          EnableCursor;
-    SIMPLE_TEXT_OUTPUT_MODE         *Mode;
-}       EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
+  EFI_TEXT_RESET                  Reset;
+  EFI_TEXT_STRING                 OutputString;
+  EFI_TEXT_TEST_STRING            TestString;
+  EFI_TEXT_QUERY_MODE             QueryMode;
+  EFI_TEXT_SET_MODE               SetMode;
+  EFI_TEXT_SET_ATTRIBUTE          SetAttribute;
+  EFI_TEXT_CLEAR_SCREEN           ClearScreen;
+  EFI_TEXT_SET_CURSOR_POSITION    SetCursorPosition;
+  EFI_TEXT_ENABLE_CURSOR          EnableCursor;
+  SIMPLE_TEXT_OUTPUT_MODE         *Mode;
+}   EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
 
 #ifndef EFI_OS_EFI_H
 #define EFI_OS_EFI_H
