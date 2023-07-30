@@ -299,6 +299,173 @@ typedef struct _EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL {
   SIMPLE_TEXT_OUTPUT_MODE         *Mode;
 }   EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
 
+//
+// UEFI Spec Release 2.10 section 8.5 Reset System
+//
+
+typedef enum {
+  EfiResetCold,
+  EfiResetWarm,
+  EfiResetShutdown,
+  EfiResetPlatformSpecific,
+}   EFI_RESET_TYPE;
+
+typedef
+VOID
+(EFIAPI *EFI_RESET_SYSTEM) (
+  IN EFI_RESET_TYPE               ResetType,
+  IN EFI_STATUS                   ResetStatus,
+  IN UINTN                        DataSize,
+  IN VOID                         *ResetData  OPTIONAL
+  );
+
+
+
+//
+// UEFI Spec Release 2.10 section 4.2 EFI Table Header
+//
+
+//
+// 32-Bit CRC to be able to validate the contents of the EFI table.
+// TODO: need to check if the convention is to check the CRC32, would make sense since this is
+//  a crucial part that needs to be stable but maybe the lack of validation can leave an opening for
+//  other code or jumps(if allowed)
+//  If the CRC32 value is static maybe it's even possible to modify it later on - need to check when is the CRC32
+//  calculated, is it with every boot(which would make sense) or with every revision change(to save ticks)
+//  section 4.3 EFI System Table
+//  "Prior to a call to EFI_BOOT_SERVICES.ExitBootServices() , all of the fields of the EFI System Table are valid."
+//  It doesn't specify when the validation needs to happen but only that it has to at some point before the call,
+//  need to check what's the convention, this can also be a potential vector.
+//
+
+typedef struct {
+  UINT64                          Signature;
+  UINT32                          Revision;
+  UINT32                          HeaderSize;
+  UINT32                          CRC32;
+  UINT32                          Reserved;
+}   EFI_TABLE_HEADER;
+
+//
+// UEFI Spec Release 2.10 section 4.3 EFI Table Header
+//
+
+typedef struct {
+  EFI_TABLE_HEADER                Hdr;
+  CHAR16                          *FirmwareVendor;
+  UINT32                          FirmwareRevision;
+  EFI_HANDLE                      ConsoleInHandle;
+  EFI_SIMPLE_TEXT_INPUT_PROTOCOL  *ConIn;
+  EFI_HANDLE                      ConsoleOutHandle;
+  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *ConOut;
+  EFI_HANDLE                      StandardErrorHandle;
+  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *StdErr;
+  EFI_RUNTIME_SERVICES            *RuntimeServices;
+  EFI_BOOT_SERVICES               *BootServices;
+  UINTN                           NumberOfTableEntries;
+  EFI_CONFIGURATION_TABLE         *ConfigurationTable;
+}   EFI_SYSTEM_TABLE;
+
+//
+// UEFI Spec Release 2.10 section 4.4 EFI Boot Services Table
+//
+
+typedef struct {
+  EFI_TABLE_HEADER              Hdr;
+  //
+  // Task Priority Services
+  //
+  EFI_RAISE_TPL                 RaiseTPL;         // EFI 1.0+
+  EFI_RESTORE_TPL               RestoreTPL;       // EFI 1.0+
+
+    //
+    // Memory Services
+    //
+    EFI_ALLOCATE_PAGES            AllocatePages;    // EFI 1.0+
+    EFI_FREE_PAGES                FreePages;        // EFI 1.0+
+    EFI_GET_MEMORY_MAP            GetMemoryMap;     // EFI 1.0+
+    EFI_ALLOCATE_POOL             AllocatePool;     // EFI 1.0+
+    EFI_FREE_POOL                 FreePool;         // EFI 1.0+
+
+    //
+    // Event & Timer Services
+    //
+    EFI_CREATE_EVENT              CreateEvent;      // EFI 1.0+
+    EFI_SET_TIMER                 SetTimer;         // EFI 1.0+
+    EFI_WAIT_FOR_EVENT            WaitForEvent;     // EFI 1.0+
+    EFI_SIGNAL_EVENT              SignalEvent;      // EFI 1.0+
+    EFI_CLOSE_EVENT               CloseEvent;       // EFI 1.0+
+    EFI_CHECK_EVENT               CheckEvent;       // EFI 1.0+
+
+    //
+    // Protocol Handler Services
+    //
+    EFI_INSTALL_PROTOCOL_INTERFACE              InstallProtocolInterface;           // EFI 1.0+
+    EFI_REINSTALL_PROTOCOL_INTERFACE            ReinstallProtocolInterface;         // EFI 1.0+
+    EFI_UNINSTALL_PROTOCOL_INTERFACE            UninstallProtocolInterface;         // EFI 1.0+
+    EFI_HANDLE_PROTOCOL                         HandleProtocol;                     // EFI 1.0+
+  VOID*                         Reserved;         // EFI 1.0+
+    EFI_REGISTER_PROTOCOL_NOTIFY                RegisterProtocolNotify;             // EFI 1.0+
+    EFI_LOCATE_HANDLE                           LocateHandle;                       // EFI 1.0+
+    EFI_LOCATE_DEVICE_PATH                      LocateDevicePath;                   // EFI 1.0+
+    EFI_INSTALL_CONFIGURATION_TABLE             InstallConfigurationTable;          // EFI 1.0+
+
+    //
+    // Image Services
+    //
+
+    // TODO: check if EFI_IMAGE_UNLOAD is a typo, I think it needs to be EFI_IMAGE_LOAD, maybe another vector
+    EFI_IMAGE_UNLOAD              LoadImage;        // EFI 1.0+
+    EFI_IMAGE_START               StartImage;       // EFI 1.0+
+    EFI_EXIT                      Exit;             // EFI 1.0+
+    EFI_IMAGE_UNLOAD              UnloadImage;      // EFI 1.0+
+    EFI_EXIT_BOOT_SERVICES        ExitBootServices; // EFI 1.0+
+
+    //
+    // Miscellaneous Services
+    //
+    EFI_GET_NEXT_MONOTONIC_COUNT  GetNextMonotonicCount;        // EFI 1.0+
+    EFI_STALL                     Stall;                        // EFI 1.0+
+    EFI_SET_WATCHDOG_TIMER        SetWatchdogTimer;             // EFI 1.0+
+
+    //
+    // Driver Support Services
+    //
+    EFI_CONNECT_CONTROLLER        ConnectController;            // EFI 1.1
+    EFI_DISCONNECT_CONTROLLER     DisconnectController;         // EFI 1.1+
+
+    //
+    // Open and Close Protocol Services
+    //
+    EFI_OPEN_PROTOCOL             OpenProtocol;                 // EFI 1.1+
+    EFI_CLOSE_PROTOCOL            CloseProtocol;                // EFI 1.1+
+    EFI_OPEN_PROTOCOL_INFORMATION OpenProtocolInformation;      // EFI 1.1+
+
+    //
+    // Library Services
+    //
+
+    // TODO: check if EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES is a typo
+    EFI_PROTOCOLS_PER_HANDLE      ProtocolsPerHandle;           // EFI 1.1+
+    EFI_LOCATE_HANDLE_BUFFER      LocateHandleBuffer;           // EFI 1.1+
+    EFI_LOCATE_PROTOCOL           LocateProtocol;               // EFI 1.1+
+    EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES  InstallMultipleProtocolInterfaces;   // EFI 1.1+
+    EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES  UninstallMultipleProtocolInterfaces; // EFI 1.1+
+
+    //
+    // 32-bit CRC Services
+    //
+    EFI_CALCULATE_CRC32           CalculateCrc32;               // EFI 1.1+
+
+    //
+    // Miscellaneous Services
+    //
+    EFI_COPY_MEM                  CopyMem;                      // EFI 1.1+
+    EFI_SET_MEM                   SetMem;                       // EFI 1.1+
+    EFI_CREATE_EVENT_EX           CreateEventEx;                // UEFI 2.0+
+}   EFI_BOOT_SERVICES;
+
+
 #ifndef EFI_OS_EFI_H
 #define EFI_OS_EFI_H
 
