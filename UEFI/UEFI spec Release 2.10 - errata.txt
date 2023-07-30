@@ -1,0 +1,23 @@
+UEFI spec Release 2.10
+
+page 20 
+
+onventions instead of onventions
+
+page 389
+
+describes instead of described
+
+page 396
+
+EFIAPI \*EFI_INPUT_READ_KEY instead of EFIAPI *EFI_INPUT_READ_KEY
+
+PAGE 400
+
+EFIAPI \*EFI_TEXT_RESET instead of EFIAPI *EFI_TEXT_RESET
+
+page 404
+* EFIAPI EFI_TEXT_SET_MODE) instead of EFIAPI *EFI_TEXT_SET_MODE)
+
+page 405
+#define EFI_DARKGRAY(EFI_BLACK \| EFI_BRIGHT) 0x08 same value as #define EFI_BRIGHT 0x08 and also contains a backwards slash
