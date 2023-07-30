@@ -3,6 +3,22 @@ UEFI spec Release 2.10
 page 20 
 onventions instead of onventions
 
+page 90
+ the FI_TABLE_HEADER instead of  the EFI_TABLE_HEADER
+
+page 93
+at Image Services, is this a typo ? "EFI_IMAGE_UNLOAD LoadImage"
+missing space ? "DriverSupport"
+AT Library Services is this a typo ? "EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES  InstallMultipleProtocolInterfaces;"
+
+page 232
+overlapping text 
+
+page 233
+overlapping text
+(EFIAPI \*EFI_RESET_SYSTEM) instead of (EFIAPI *EFI_RESET_SYSTEM)
+enum missing commas
+
 page 389
 describes instead of described
 
